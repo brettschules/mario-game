@@ -46,8 +46,6 @@ class Mario {
     drawMario() {
         var that = this;
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        console.log("x " + this.mx, "y " + this.my);
-
         var image = new Image();  
 
         // waits for image to load to get dimonsions and sets mario's properties
@@ -56,36 +54,37 @@ class Mario {
             that.marioHeight = this.height;
         }
 
-
-
-        image.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI4b_4gyvaRc1GeiEvr5x4FEVwJni-hf3A8qdxg70loeqY6GpxdHaIlpVi";      
-        this.context.drawImage(image, this.mx, this.my); 
+        image.src = "./images/mario-facing-screen.jpeg";      
+        this.context.drawImage(image, this.mx-this.marioWidth/2, this.my); 
         this.checkBoundary();
+
+        console.log("mario width ", this.marioWidth)
+        console.log("Canvas width ", this.canvas.width)
+        console.log("x " + this.mx, "y " + this.my);
     }
 
     checkBoundary() {
-        console.log("width, ", this.marioWidth)
-        console.log("Canvas width ", this.canvas.width)
-        if(this.mx <= 0) this.outOfBoundsLeft = true;
-        // todo: fix
+        if(this.mx <= this.marioWidth/2) this.outOfBoundsLeft = true;
+        if(this.mx >= this.canvas.width-this.marioWidth/2) this.outOfBoundsRight = true;
     }
 
     marioMoveRight() {
         if(!this.outOfBoundsRight) {
-            this.mx <= this.canvas.width-this.marioWidth ? this.mx += this.marioMoveSpeed : this.mx=this.canvas.width-this.marioWidth;
+            // checks if mario should still move a certain pixels until he goes out of bounds
+            this.mx <= this.canvas.width-this.marioWidth ? this.mx += this.marioMoveSpeed : this.mx=this.canvas.width-this.marioWidth/2;
         }
         this.outOfBoundsLeft=false;
     }
 
     marionMoveLeft() {
         if(!this.outOfBoundsLeft) { 
-            this.mx >= this.marioMoveSpeed ? this.mx -= this.marioMoveSpeed : this.mx=0;
+            this.mx >= this.marioWidth/2 + this.marioMoveSpeed ? this.mx -= this.marioMoveSpeed : this.mx=this.marioWidth/2;
         }
         this.outOfBoundsRight=false;
     }
 
     marioJump() {
-        // every 25 ms have mario jump 20 pixels up until readches maxium then vice versa for bring mario back down
+        // every 25 ms have mario jump 20 pixels up until readches maximum then vice versa for bring mario back down
         this.intervalId = setInterval(moveMarioUp.bind(this), 25);
         function moveMarioUp() {
             this.marioIsJumping = true;
@@ -105,6 +104,7 @@ class Mario {
         }
     }
 
+    // registers event listeners to be used for mario actions
     addEventListeners() {
         document.addEventListener("keydown", (e) => {
             e.stopPropagation();
@@ -117,7 +117,7 @@ class Mario {
 }
 
 class Canvas {
-    width = 500;
+    width = 1200;
     height = 500;
     canvas = null;
 
